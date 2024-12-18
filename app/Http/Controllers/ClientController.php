@@ -57,26 +57,33 @@ class ClientController extends Controller
     }
     function updateClient(Request $request)
     {
-        $client = Client::find($request->id);
-        if (!$client) {
-            return response()->json([
-                'message' => 'Data Tidak ada',
+        try {
+            $client = Client::find($request->id);
+            if (!$client) {
+                return response()->json([
+                    'message' => 'Data Tidak ada',
+                ]);
+            }
+
+            $client->update([
+                'name' => $request->name,
+                'slug' => $request->slug,
+                'is_project' => $request->is_project,
+                'address' => $request->address,
+                'phone' => $request->phone,
+                'city' => $request->city
             ]);
+
+            return response()->json([
+                'message' => 'Success',
+                'data' => $client
+            ]);
+        } catch (\Exception $err) {
+            return response()->json([
+                'message' => 'Gagal membuat user',
+                'data' => $err->getMessage()
+            ], 500);
         }
-
-        $client->update([
-            'name' => $request->name,
-            'slug' => $request->slug,
-            'is_project' => $request->is_project,
-            'address' => $request->address,
-            'phone' => $request->phone,
-            'city' => $request->city
-        ]);
-
-        return response()->json([
-            'message' => 'Success',
-            'data' => $client
-        ]);
     }
     public function deleteClient(Request $request)
     {
